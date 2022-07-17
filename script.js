@@ -4,10 +4,25 @@ function getComputerChoice() {
     return choices[randomChoiceIndex];
 }
 
+function getPlayerChoice() {
+    return prompt("Pick 'Rock', 'Paper' or 'Scissors'");
+}
+
 function toTitleCase(string) {
     string = string.toLowerCase();
     string = string[0].toUpperCase() + string.slice(1);
     return string;
+}
+
+function validatePlayerChoice(playerChoice) {
+    playerChoice = playerChoice.toUpperCase();
+
+    if (playerChoice !== "ROCK" && playerChoice !== "PAPER" && playerChoice !== "SCISSORS") {
+        console.log("Invalid choice, please try again");
+        return false;
+    }
+
+    return true;
 }
 
 function playRound(playerSelection, computerSelection) {
@@ -70,9 +85,53 @@ function playRound(playerSelection, computerSelection) {
             break;
     }
 
-    return winnerDeclaration;
+    console.log(winnerDeclaration);
+    return result;
 }
 
-const playerSelection = "rock";
-const computerSelection = getComputerChoice();
-console.log(playRound(playerSelection, computerSelection));
+function game() {
+    let playerScore = 0;
+    let computerScore = 0;
+    let playerChoice;
+    let computerChoice;
+    let currentRoundResult;
+
+
+    for (let i = 0; i < 5; i++) {
+        playerChoice = getPlayerChoice();
+        computerChoice = getComputerChoice();
+        currentRoundResult = playRound(playerChoice, computerChoice);
+
+        switch(currentRoundResult) {
+            case "Won":
+                playerScore++;
+                break;
+            case "Draw":
+                playerScore++;
+                computerScore++;
+                break;
+            case "Lost":
+                computerScore++;
+                break;
+        }
+    }
+
+    let scoreDifference = playerScore - computerScore;
+    let gameResult;
+
+    switch(true) {
+        case scoreDifference > 0:
+            gameResult = "You have won!";
+            break;
+        case scoreDifference === 0:
+            gameResult = "It's a draw!";
+            break;
+        case scoreDifference < 0:
+            gameResult = "You have lost!";
+            break;
+    }
+
+    return gameResult;
+}
+
+console.log(game());
