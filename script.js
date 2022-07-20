@@ -1,3 +1,5 @@
+const display = document.querySelector()
+
 function getComputerChoice() {
     choices = ["ROCK", "PAPER", "SCISSORS"];
     let randomChoiceIndex = Math.floor(Math.random() * 100) % 3;
