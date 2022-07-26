@@ -1,13 +1,21 @@
-const display = document.querySelector()
+const playerScoreBoard = document.querySelector(".player-score");
+const computerScoreBoard = document.querySelector(".computer-score");
+const resultDisplay = document.querySelector(".result-display");
+
+const selectionButtons = document.querySelectorAll(".player-selection");
+selectionButtons.forEach(button => button.addEventListener('click', e => {
+    playRound(e.target.textContent, getComputerChoice());
+}));
+
+let playerScore = 0;
+let computerScore = 0;
+
+let isGameFinished = false;
 
 function getComputerChoice() {
     choices = ["ROCK", "PAPER", "SCISSORS"];
     let randomChoiceIndex = Math.floor(Math.random() * 100) % 3;
     return choices[randomChoiceIndex];
-}
-
-function getPlayerChoice() {
-    return prompt("Pick 'Rock', 'Paper' or 'Scissors'");
 }
 
 function toTitleCase(string) {
@@ -16,22 +24,9 @@ function toTitleCase(string) {
     return string;
 }
 
-function validatePlayerChoice(playerChoice) {
-    playerChoice = playerChoice.toUpperCase();
-
-    if (playerChoice !== "ROCK" && playerChoice !== "PAPER" && playerChoice !== "SCISSORS") {
-        console.log("Invalid choice, please try again");
-        return false;
-    }
-
-    return true;
-}
-
-function playRound(playerSelection, computerSelection) {
+function getRoundResult(playerSelection, computerSelection) {
     playerSelection = playerSelection.toUpperCase();
-
-    let result;
-    let winnerDeclaration;
+    computerSelection = computerSelection.toUpperCase();
 
     if (playerSelection === "ROCK") {
         switch(computerSelection) {
@@ -75,65 +70,65 @@ function playRound(playerSelection, computerSelection) {
         }
     }
 
-    switch(result) {
-        case "Won":
-            winnerDeclaration = `You ${result}! ${toTitleCase(playerSelection)} beats ${toTitleCase(computerSelection)}`;
-            break;
-        case "Lost":
-            winnerDeclaration = `You ${result}! ${toTitleCase(computerSelection)} beats ${toTitleCase(playerSelection)}`
-            break;
-        case "Draw":
-            winnerDeclaration = `It's a draw! Both opponents have chosen ${toTitleCase(playerSelection)}`;
-            break;
-    }
-
-    console.log(winnerDeclaration);
     return result;
 }
 
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
-    let playerChoice;
-    let computerChoice;
-    let currentRoundResult;
+function updateScore(roundResult) {
+    roundResult = toTitleCase(roundResult);
 
-
-    for (let i = 0; i < 5; i++) {
-        playerChoice = getPlayerChoice();
-        computerChoice = getComputerChoice();
-        currentRoundResult = playRound(playerChoice, computerChoice);
-
-        switch(currentRoundResult) {
-            case "Won":
-                playerScore++;
-                break;
-            case "Draw":
-                playerScore++;
-                computerScore++;
-                break;
-            case "Lost":
-                computerScore++;
-                break;
-        }
+    if (roundResult === "Won") {
+        playerScore++;
+    } else if (roundResult === "Lost") {
+        computerScore++;
     }
 
-    let scoreDifference = playerScore - computerScore;
-    let gameResult;
-
-    switch(true) {
-        case scoreDifference > 0:
-            gameResult = "You have won!";
-            break;
-        case scoreDifference === 0:
-            gameResult = "It's a draw!";
-            break;
-        case scoreDifference < 0:
-            gameResult = "You have lost!";
-            break;
-    }
-
-    return gameResult;
+    playerScoreBoard.textContent = `Player: ${playerScore}`;
+    computerScoreBoard.textContent = `Computer: ${computerScore}`;
 }
 
-console.log(game());
+function getResultDisplayText(playerSelection, computerSelection, roundResult) {
+    if (playerScore === 5) {
+        return `You have won the game with the score ${playerScore} to ${computerScore}!`;
+    } else if (computerScore === 5) {
+        return `You have lost the game with the score ${playerScore} to ${computerScore}!`
+    }
+
+    roundResult = toTitleCase(roundResult);
+    let resultVerbForm = playerSelection === "SCISSORS" ? "beat" : "beats";
+
+    let roundResultDisplayText;
+    let fullResultText;
+    switch (roundResult) {
+        case "Won":
+            roundResultDisplayText = "Round won!";
+            fullResultText = `${roundResultDisplayText} ${toTitleCase(playerSelection)} ${resultVerbForm} ${toTitleCase(computerSelection)}`;
+            break;
+        case "Draw":
+            roundResultDisplayText = "Round drawn!"
+            fullResultText = `${roundResultDisplayText} Both opponents have chosen ${toTitleCase(playerSelection)}`;
+            break;
+        case "Lost":
+            roundResultDisplayText = "Round lost!"
+            fullResultText = `${roundResultDisplayText} ${toTitleCase(computerSelection)} ${resultVerbForm} ${toTitleCase(playerSelection)}`;
+            break;
+    }
+
+    return fullResultText;
+}
+
+function setResultDisplay(playerSelection, computerSelection, roundResult) {
+    resultDisplay.textContent = getResultDisplayText(playerSelection, computerSelection, roundResult);
+    resultDisplay.style.visibility = "visible";
+}
+
+function playRound(playerSelection, computerSelection) {
+    if (computerScore === 5 || playerScore === 5) {
+        computerScore = 0;
+        playerScore = 0;
+    }
+
+    let result = getRoundResult(playerSelection, computerSelection);
+
+    updateScore(result);
+    setResultDisplay(playerSelection, computerSelection, result);
+}

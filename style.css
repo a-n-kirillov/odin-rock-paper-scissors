@@ -7,10 +7,12 @@ body {
 }
 
 .game {
+    box-sizing: border-box;
+    width: 70%;
     background-color: honeydew;
     font-family: 'Pacifico', cursive;
     font-size: 4.2rem;
-    padding: 2% 5%;
+    padding: 2% 6%;
     border: 4px solid rgb(49, 160, 225);
     border-radius: 20px;
     display: flex;
@@ -27,11 +29,19 @@ body {
     color: red;
 }
 
+.result-display {
+    font-family: Marker Felt, fantasy;
+    margin: 15px auto;
+    font-size: 2.1rem;
+    visibility: hidden;
+    text-align: center;
+}
+
 .selection-buttons {
     margin-top: 10px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 18px;
 }
 
 .player-selection {
